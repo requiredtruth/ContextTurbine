@@ -1,0 +1,1 @@
+{"source":"The database is SQLite. The server port 8209 must remain local. Generated files go under ./output. This paragraph contains disposable detail.","facts":[{"id":"database","text":"database is SQLite"},{"id":"port","text":"server port 8209"},{"id":"output","text":"files go under output","required":false}],"rounds":2,"target_characters":100}
