@@ -45,13 +45,21 @@ class TurbineReport:
 def _normalized(text: str) -> str:
     return " ".join(_TOKEN.findall(text.lower()))
 
+def _contains_token_sequence(haystack: tuple[str, ...], needle: tuple[str, ...]) -> bool:
+    """Return whether ``needle`` occurs as complete consecutive tokens."""
+    width = len(needle)
+    return width > 0 and any(
+        haystack[index:index + width] == needle
+        for index in range(len(haystack) - width + 1)
+    )
+
 def _score(text: str, fact: Fact) -> FactResult:
-    haystack = _normalized(text)
-    needle = _normalized(fact.text)
-    tokens = set(needle.split())
-    present = set(haystack.split())
+    haystack = tuple(_normalized(text).split())
+    needle = tuple(_normalized(fact.text).split())
+    tokens = set(needle)
+    present = set(haystack)
     recall = len(tokens & present) / len(tokens) if tokens else 0.0
-    return FactResult(fact.id, fact.required, needle in haystack, recall)
+    return FactResult(fact.id, fact.required, _contains_token_sequence(haystack, needle), recall)
 
 def run_turbine(source: str, facts: list[Fact], rounds: int, compressor: Callable[[str, tuple[Fact, ...], int], str], *, target_characters: int = 4000) -> TurbineReport:
     if not source.strip() or not facts:
